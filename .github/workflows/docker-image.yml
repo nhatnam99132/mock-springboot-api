@@ -8,11 +8,25 @@ on:
 
 jobs:
 
-  build:
+  build-and-push:
 
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
+      
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag namtn6/mock-springboot-api:$(date +%s)
+      run: |
+        docker build . --file Dockerfile --tag namtn6/mock-springboot-api:${{ github.sha }}
+        docker build . --file Dockerfile --tag namtn6/mock-springboot-api:latest
+
+    - name: Push the Docker image to Docker Hub
+      run: |
+        docker push namtn6/mock-springboot-api:${{ github.sha }}
+        docker push namtn6/mock-springboot-api:latest
