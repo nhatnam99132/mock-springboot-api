@@ -52,9 +52,7 @@ jobs:
 
     - name: Retrieve the current task definition
       run: |
-        aws ecs describe-task-definition \
-          --task-definition ${{ vars.ECS_TASK_DEFINITION }} \
-          > task-definition.json
+        aws s3 cp ${{ vars.ECS_TASK_DEFINITION }}task-definition .
         cat task-definition.json
 
     - name: Update task definition with new image tag
@@ -77,6 +75,7 @@ jobs:
           --cli-input-json file://updated-task-definition.json \
           --query "taskDefinition.taskDefinitionArn" --output text)
         echo "New task definition registered: $NEW_TASK_DEF"
+        aws s3 updated-task-definition.json ${{ vars.ECS_TASK_DEFINITION }}
 
     - name: Update ECS Service
       run: |
