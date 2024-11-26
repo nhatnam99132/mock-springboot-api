@@ -73,7 +73,7 @@ jobs:
       run: |
         NEW_TASK_DEF=$(aws ecs register-task-definition --cli-input-json file://task-definition.json --query "taskDefinition.taskDefinitionArn" --output text)
         echo "New task definition registered: $NEW_TASK_DEF"
-        aws s3 updated-task-definition.json ${{ vars.ECS_TASK_DEFINITION }}
+        aws s3 cp updated-task-definition.json ${{ vars.ECS_TASK_DEFINITION }}
 
     - name: Update ECS Service
       run: |
