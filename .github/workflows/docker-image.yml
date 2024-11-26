@@ -77,10 +77,6 @@ jobs:
 
     - name: Update ECS Service
       run: |
-        aws ecs update-service \
-          --cluster ${{ vars.ECS_CLUSTER_NAME }} \
-          --service ${{ vars.ECS_SERVICE_NAME }} \
-          --task-definition $NEW_TASK_DEF \
-          --force-new-deployment
+        aws ecs update-service --cluster ${{ vars.ECS_CLUSTER_NAME }} --service ${{ vars.ECS_SERVICE_NAME }} --task-definition $NEW_TASK_DEF --force-new-deployment
 
         echo "Service updated with new task definition."
