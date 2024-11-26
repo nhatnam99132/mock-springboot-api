@@ -65,8 +65,8 @@ jobs:
 
         # Replace the current image tag with SHORT_SHA
         jq --arg TAG "$SHORT_SHA" \
-          '.taskDefinition.containerDefinitions[0].image |= sub(":[^:]+$"; ":" + $TAG)' \
-          task-definition.json > updated-task-definition.json
+        '.containerDefinitions[0].image |= sub(":[^:]+$"; ":" + $TAG)' \
+        task-definition.json > updated-task-definition.json
 
         echo "Updated task definition:"
         cat updated-task-definition.json
