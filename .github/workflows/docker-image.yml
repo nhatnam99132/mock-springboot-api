@@ -2,14 +2,19 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - develop  # Run on push to develop branch (for dev environment)
+      - main     # Run on push to main branch (for prod environment)
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - develop  # Run on pull requests targeting the develop branch (for dev environment)
+      - main     # Run on pull requests targeting the main branch (for prod environment
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    environment: dev
+    # Dynamically set the environment based on the branch (develop or main)
+    environment: ${{ github.ref == 'refs/heads/develop' && 'dev' || 'prod' }} 
 
     steps:
     - uses: actions/checkout@v4
