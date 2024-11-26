@@ -36,3 +36,54 @@ jobs:
         SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
         docker push ${{ vars.DOCKERHUB_REPO }}:$SHORT_SHA
         docker push ${{ vars.DOCKERHUB_REPO }}:latest
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/develop' && 'dev' || 'prod' }}
+
+    steps:
+    - name: Set up AWS CLI
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+        role-to-assume: ${{ secrets.ROLE_ARN }}
+
+    - name: Retrieve the current task definition
+      run: |
+        aws ecs describe-task-definition \
+          --task-definition ${{ vars.ECS_TASK_DEFINITION }} \
+          > task-definition.json
+        cat task-definition.json
+
+    - name: Update task definition with new image tag
+      run: |
+        # Extract SHORT_SHA for tagging
+        SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+        echo "SHORT_SHA: $SHORT_SHA"
+
+        # Replace the current image tag with SHORT_SHA
+        jq --arg TAG "$SHORT_SHA" \
+          '.taskDefinition.containerDefinitions[0].image |= sub(":[^:]+$"; ":" + $TAG)' \
+          task-definition.json > updated-task-definition.json
+
+        echo "Updated task definition:"
+        cat updated-task-definition.json
+
+    - name: Register the updated task definition
+      run: |
+        NEW_TASK_DEF=$(aws ecs register-task-definition \
+          --cli-input-json file://updated-task-definition.json \
+          --query "taskDefinition.taskDefinitionArn" --output text)
+        echo "New task definition registered: $NEW_TASK_DEF"
+
+    - name: Update ECS Service
+      run: |
+        aws ecs update-service \
+          --cluster ${{ vars.ECS_CLUSTER_NAME }} \
+          --service ${{ vars.ECS_SERVICE_NAME }} \
+          --task-definition $NEW_TASK_DEF \
+          --force-new-deployment
+
+        echo "Service updated with new task definition."
