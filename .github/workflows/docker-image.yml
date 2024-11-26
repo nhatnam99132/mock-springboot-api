@@ -23,11 +23,11 @@ jobs:
     - name: Build the Docker image
       run: |
         SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
-        docker build . --file Dockerfile --tag namtn6/mock-springboot-api:$SHORT_SHA
-        docker build . --file Dockerfile --tag namtn6/mock-springboot-api:latest
+        docker build . --file Dockerfile --tag ${{ vars.DOCKERHUB_REPO }}:$SHORT_SHA
+        docker build . --file Dockerfile --tag ${{ vars.DOCKERHUB_REPO }}:latest
 
     - name: Push the Docker image to Docker Hub
       run: |
         SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
-        docker push namtn6/mock-springboot-api:$SHORT_SHA
-        docker push namtn6/mock-springboot-api:latest
+        docker push ${{ vars.DOCKERHUB_REPO }}:$SHORT_SHA
+        docker push ${{ vars.DOCKERHUB_REPO }}:latest
