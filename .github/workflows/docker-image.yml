@@ -52,7 +52,7 @@ jobs:
 
     - name: Retrieve the current task definition
       run: |
-        aws s3 cp ${{ vars.ECS_TASK_DEFINITION }}task-definition .
+        aws s3 cp ${{ vars.ECS_TASK_DEFINITION }}task-definition.json .
         cat task-definition.json
 
     - name: Update task definition with new image tag
