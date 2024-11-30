@@ -1,8 +1,7 @@
-package com.c99.mock_project.repository;
+package com.c99.mock_project.repositories;
 
-import com.c99.mock_project.model.AccidentHistory;
+import com.c99.mock_project.entities.AccidentHistory;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 
 public interface AccidentHistoryRepository extends JpaRepository<AccidentHistory, Long> {

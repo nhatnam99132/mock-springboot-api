@@ -1,7 +1,8 @@
-package com.c99.mock_project.service;
+package com.c99.mock_project.services;
 
-import com.c99.mock_project.model.Report;
-import com.c99.mock_project.repository.ReportRepository;
+import com.c99.mock_project.entities.Report;
+import com.c99.mock_project.repositories.ReportRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,12 +10,12 @@ import java.util.List;
 
 @Service
 public class ReportService {
-    private final ReportRepository reportRepository;
 
     @Autowired
-    public ReportService(ReportRepository reportRepository) {
-        this.reportRepository = reportRepository;
-    }
+    private ReportRepository reportRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     public List<Report> getAllReports() {
         return reportRepository.findAll();
@@ -34,11 +35,7 @@ public class ReportService {
 
     public Report updateReport(Long id, Report reportDetails) {
         return reportRepository.findById(id).map(report -> {
-            report.setSummary(reportDetails.getSummary());
-            report.setVin(reportDetails.getVin());
-            report.setVehicleSpecifications(reportDetails.getVehicleSpecifications());
-            report.setReportedIncidents(reportDetails.getReportedIncidents());
-            report.setProblemChecklist(reportDetails.getProblemChecklist());
+            modelMapper.map(reportDetails, report);
             return reportRepository.save(report);
         }).orElse(null);
     }
