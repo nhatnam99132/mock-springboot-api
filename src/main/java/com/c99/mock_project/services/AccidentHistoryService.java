@@ -1,7 +1,8 @@
-package com.c99.mock_project.service;
+package com.c99.mock_project.services;
 
-import com.c99.mock_project.model.AccidentHistory;
-import com.c99.mock_project.repository.AccidentHistoryRepository;
+import com.c99.mock_project.entities.AccidentHistory;
+import com.c99.mock_project.repositories.AccidentHistoryRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,12 +10,11 @@ import java.util.List;
 
 @Service
 public class AccidentHistoryService {
-    private final AccidentHistoryRepository accidentHistoryRepository;
 
     @Autowired
-    public AccidentHistoryService(AccidentHistoryRepository accidentHistoryRepository) {
-        this.accidentHistoryRepository = accidentHistoryRepository;
-    }
+    private AccidentHistoryRepository accidentHistoryRepository;
+    @Autowired
+    private ModelMapper modelMapper;
 
     public List<AccidentHistory> getAllAccidentHistory() {
         return accidentHistoryRepository.findAll();
@@ -34,8 +34,7 @@ public class AccidentHistoryService {
 
     public AccidentHistory updateAccidentHistory(Long id, AccidentHistory accidentHistoryDetails) {
         return accidentHistoryRepository.findById(id).map(accidentHistory -> {
-            accidentHistory.setAccidentDetails(accidentHistoryDetails.getAccidentDetails());
-            accidentHistory.setDate(accidentHistoryDetails.getDate());
+            modelMapper.map(accidentHistoryDetails, accidentHistory);
             return accidentHistoryRepository.save(accidentHistory);
         }).orElse(null);
     }

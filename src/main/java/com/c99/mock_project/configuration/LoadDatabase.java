@@ -1,15 +1,6 @@
-package com.c99.mock_project.config;
+package com.c99.mock_project.configuration;
 
-import com.c99.mock_project.model.Car;
-import com.c99.mock_project.model.Report;
-import com.c99.mock_project.repository.CarRepository;
-import com.c99.mock_project.repository.ReportRepository;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.time.LocalDate;
-import java.util.Optional;
 
 @Configuration
 public class LoadDatabase {

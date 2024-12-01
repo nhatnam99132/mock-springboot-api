@@ -1,4 +1,4 @@
-package com.c99.mock_project.model;
+package com.c99.mock_project.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,7 +17,7 @@ public class VehicleDetails {
     private Long id;
     @OneToOne
     @JoinColumn(name = "car_id")
-    private Car car;
+    private Vehicle vehicle;
     @Column(name = "\"year\"")
     private int year;
     private String make;

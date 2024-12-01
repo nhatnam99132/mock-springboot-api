@@ -1,7 +1,8 @@
-package com.c99.mock_project.service;
+package com.c99.mock_project.services;
 
-import com.c99.mock_project.model.ProblemChecklist;
-import com.c99.mock_project.repository.ProblemChecklistRepository;
+import com.c99.mock_project.entities.ProblemChecklist;
+import com.c99.mock_project.repositories.ProblemChecklistRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,12 +10,11 @@ import java.util.List;
 
 @Service
 public class ProblemChecklistService {
-    private final ProblemChecklistRepository problemChecklistRepository;
 
     @Autowired
-    public ProblemChecklistService(ProblemChecklistRepository problemChecklistRepository) {
-        this.problemChecklistRepository = problemChecklistRepository;
-    }
+    private ProblemChecklistRepository problemChecklistRepository;
+    @Autowired
+    private ModelMapper modelMapper;
 
     public List<ProblemChecklist> getAllProblemChecklists() {
         return problemChecklistRepository.findAll();
@@ -36,8 +36,7 @@ public class ProblemChecklistService {
         return problemChecklistRepository
                 .findById(id)
                 .map(problemChecklist -> {
-                    problemChecklist.setProblems(problemChecklistDetails.getProblems());
-                    problemChecklist.setDate(problemChecklistDetails.getDate());
+                    modelMapper.map(problemChecklistDetails, problemChecklist);
                     return problemChecklistRepository.save(problemChecklist);
                 }).orElse(null);
     }

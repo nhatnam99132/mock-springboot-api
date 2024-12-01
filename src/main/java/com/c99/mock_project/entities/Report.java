@@ -1,4 +1,4 @@
-package com.c99.mock_project.model;
+package com.c99.mock_project.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,13 +13,17 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AccidentHistory {
+public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
     @JoinColumn(name = "car_id")
-    private Car car;
-    private String accidentDetails;
+    private Vehicle vehicle;
+    private String summary;
+    private String vin;
+    private String vehicleSpecifications;
+    private Boolean reportedIncidents = false;
+    private Boolean problemChecklist = false;
     private LocalDate date;
 }

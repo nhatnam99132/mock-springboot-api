@@ -1,8 +1,7 @@
-package com.c99.mock_project.repository;
+package com.c99.mock_project.repositories;
 
-import com.c99.mock_project.model.VehicleDetails;
+import com.c99.mock_project.entities.VehicleDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 
 public interface VehicleDetailsRepository extends JpaRepository<VehicleDetails, Long> {

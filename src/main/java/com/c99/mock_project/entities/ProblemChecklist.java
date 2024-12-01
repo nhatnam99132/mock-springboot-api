@@ -1,4 +1,4 @@
-package com.c99.mock_project.model;
+package com.c99.mock_project.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,7 +19,7 @@ public class ProblemChecklist {
     private Long id;
     @ManyToOne
     @JoinColumn(name = "car_id")
-    private Car car;
+    private Vehicle vehicle;
     private String problems;
     private LocalDate date;
 }
