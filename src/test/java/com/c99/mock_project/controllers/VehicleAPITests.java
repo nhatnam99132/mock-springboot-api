@@ -95,11 +95,11 @@ public class VehicleAPITests {
         mockMvc.perform(get("/api/vehicles/{id}", id)
                         .header("Authorization", basicAuthHeader))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(id.intValue())))
-                .andExpect(jsonPath("$.vin", is(savedVehicle.getVin())))
-                .andExpect(jsonPath("$.brand", is(savedVehicle.getBrand())))
-                .andExpect(jsonPath("$.model", is(savedVehicle.getModel())))
-                .andExpect(jsonPath("$.year", is(savedVehicle.getYear())));
+                .andExpect(jsonPath("$.data.id", is(id.intValue())))
+                .andExpect(jsonPath("$.data.vin", is(savedVehicle.getVin())))
+                .andExpect(jsonPath("$.data.brand", is(savedVehicle.getBrand())))
+                .andExpect(jsonPath("$.data.model", is(savedVehicle.getModel())))
+                .andExpect(jsonPath("$.data.year", is(savedVehicle.getYear())));
     }
 
     @Test
@@ -124,14 +124,14 @@ public class VehicleAPITests {
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(vehicle)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.vin").value(vehicle.getVin()))
-                .andExpect(jsonPath("$.manufacturer").value(vehicle.getManufacturer()))
-                .andExpect(jsonPath("$.brand").value(vehicle.getBrand()))
-                .andExpect(jsonPath("$.model").value(vehicle.getModel()))
-                .andExpect(jsonPath("$.engine").value(vehicle.getEngine()))
-                .andExpect(jsonPath("$.year").value(vehicle.getYear()))
-                .andExpect(jsonPath("$.trim").value(vehicle.getTrim()))
-                .andExpect(jsonPath("$.mileage").value(vehicle.getMileage()));
+                .andExpect(jsonPath("$.data.vin").value(vehicle.getVin()))
+                .andExpect(jsonPath("$.data.manufacturer").value(vehicle.getManufacturer()))
+                .andExpect(jsonPath("$.data.brand").value(vehicle.getBrand()))
+                .andExpect(jsonPath("$.data.model").value(vehicle.getModel()))
+                .andExpect(jsonPath("$.data.engine").value(vehicle.getEngine()))
+                .andExpect(jsonPath("$.data.year").value(vehicle.getYear()))
+                .andExpect(jsonPath("$.data.trim").value(vehicle.getTrim()))
+                .andExpect(jsonPath("$.data.mileage").value(vehicle.getMileage()));
     }
 
     @Test
@@ -145,14 +145,14 @@ public class VehicleAPITests {
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(updatedVehicle)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.vin").value(updatedVehicle.getVin()))
-                .andExpect(jsonPath("$.manufacturer").value(updatedVehicle.getManufacturer()))
-                .andExpect(jsonPath("$.brand").value(updatedVehicle.getBrand()))
-                .andExpect(jsonPath("$.model").value(updatedVehicle.getModel()))
-                .andExpect(jsonPath("$.engine").value(updatedVehicle.getEngine()))
-                .andExpect(jsonPath("$.year").value(updatedVehicle.getYear()))
-                .andExpect(jsonPath("$.trim").value(updatedVehicle.getTrim()))
-                .andExpect(jsonPath("$.mileage").value(updatedVehicle.getMileage()));
+                .andExpect(jsonPath("$.data.vin").value(updatedVehicle.getVin()))
+                .andExpect(jsonPath("$.data.manufacturer").value(updatedVehicle.getManufacturer()))
+                .andExpect(jsonPath("$.data.brand").value(updatedVehicle.getBrand()))
+                .andExpect(jsonPath("$.data.model").value(updatedVehicle.getModel()))
+                .andExpect(jsonPath("$.data.engine").value(updatedVehicle.getEngine()))
+                .andExpect(jsonPath("$.data.year").value(updatedVehicle.getYear()))
+                .andExpect(jsonPath("$.data.trim").value(updatedVehicle.getTrim()))
+                .andExpect(jsonPath("$.data.mileage").value(updatedVehicle.getMileage()));
     }
 
     @Test
