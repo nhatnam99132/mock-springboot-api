@@ -1,5 +1,6 @@
 package com.c99.mock_project.exceptions;
 
+import com.c99.mock_project.models.ApiResponse;
 import com.c99.mock_project.models.ErrorResponse;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -29,26 +30,29 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
+    public ResponseEntity<ApiResponse<Void>> handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
         // Map exception to ErrorResponse
         ErrorResponse errorResponse = modelMapper.map(ex, ErrorResponse.class);
         errorResponse.setTimestamp(LocalDateTime.now());
-        errorResponse.setStatus(HttpStatus.NOT_FOUND.value());
-        errorResponse.setError("Resource NOT FOUND");  // General error message
-        errorResponse.setMessage(ex.getMessage());  // Use the exception's message
+        errorResponse.setCode(HttpStatus.NOT_FOUND.value());
+        errorResponse.setError("Resource NOT FOUND");
+        errorResponse.setMessage(ex.getMessage());
         errorResponse.setPath(request.getDescription(false));
+
+        // Create ApiResponse with error details
+        ApiResponse<Void> response = new ApiResponse<>(null, errorResponse);
 
         // Log the error details
         logger.error("Resource Not Found Exception: {}", ex.getMessage(), ex);
-        logger.error("Error Response: {}", errorResponse);
+        logger.error("Error Response: {}", response);
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
-    // Handle MethodArgumentNotValidException for bad request (e.g., validation failure)
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ErrorResponse> handleBadRequestException(MethodArgumentNotValidException ex, WebRequest request) {
+    public ResponseEntity<ApiResponse<Void>> handleBadRequestException(MethodArgumentNotValidException ex, WebRequest request) {
         // Collect error details in a simpler format
         List<String> errorMessages = ex.getBindingResult()
                 .getFieldErrors()
@@ -56,36 +60,44 @@ public class GlobalExceptionHandler {
                 .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
                 .collect(Collectors.toList());
 
-        // Create an ErrorResponse object
+        // Create ErrorResponse object
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setTimestamp(LocalDateTime.now());
-        errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+        errorResponse.setCode(HttpStatus.BAD_REQUEST.value());
         errorResponse.setError("Bad Request");
         errorResponse.setMessage(String.join(", ", errorMessages));
         errorResponse.setPath(request.getDescription(false));
 
+        // Create ApiResponse with error details
+        ApiResponse<Void> response = new ApiResponse<>(null, errorResponse);
+
         // Log the bad request error
         logger.error("Bad Request Exception: {}", ex.getMessage(), ex);
-        logger.error("Error Response: {}", errorResponse);
+        logger.error("Error Response: {}", response);
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex, WebRequest request) {
+    public ResponseEntity<ApiResponse<Void>> handleGeneralException(Exception ex, WebRequest request) {
         // Map exception to ErrorResponse
         ErrorResponse errorResponse = modelMapper.map(ex, ErrorResponse.class);
         errorResponse.setTimestamp(LocalDateTime.now());
-        errorResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        errorResponse.setError("Internal Server Error");  // General error message
-        errorResponse.setMessage(ex.getMessage());  // Use the exception's message
+        errorResponse.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        errorResponse.setError("Internal Server Error");
+        errorResponse.setMessage(ex.getMessage());
         errorResponse.setPath(request.getDescription(false));
+
+        // Create ApiResponse with error details
+        ApiResponse<Void> response = new ApiResponse<>(null, errorResponse);
 
         // Log the general error
         logger.error("General Exception: {}", ex.getMessage(), ex);
-        logger.error("Error Response: {}", errorResponse);
+        logger.error("Error Response: {}", response);
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
 }

@@ -8,6 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -40,12 +44,22 @@ public class VehicleServiceTests {
         Vehicle vehicle = new Vehicle();
         vehicles.add(vehicle);
 
-        when(vehicleRepository.findAll()).thenReturn(vehicles);
-        List<Vehicle> result = vehicleService.getAll();
+        // Create Pageable with pagination info (page 0, 10 items per page)
+        Pageable pageable = PageRequest.of(0, 10);
 
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(vehicleRepository).findAll();
+        // Create a Page object with mock data
+        Page<Vehicle> vehiclePage = new PageImpl<>(vehicles, pageable, vehicles.size());
+
+        // Mock the repository to return the Page object
+        when(vehicleRepository.findAll(pageable)).thenReturn(vehiclePage);
+
+        // Call the service method (which should return a list of vehicles with pagination)
+        Page<Vehicle> result = vehicleService.getAll(pageable);
+
+        // Assertions to verify the behavior
+        assertNotNull(result);  // Ensure the result is not null
+        assertEquals(1, result.getContent().size());  // Verify the size of the list inside the Page
+        verify(vehicleRepository).findAll(pageable);  // Verify that findAll() was called with pageable
     }
 
     @Test
