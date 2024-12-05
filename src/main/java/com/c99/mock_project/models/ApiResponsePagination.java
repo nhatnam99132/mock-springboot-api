@@ -5,13 +5,15 @@ public class ApiResponsePagination<T> {
     private ErrorResponse error;
     private Long totalItems;
     private Integer totalPages;
+    private Long totalVehicles;
 
     // Constructor, getter, setter
-    public ApiResponsePagination(T data, ErrorResponse error, Long totalItems, Integer totalPages) {
+    public ApiResponsePagination(T data, ErrorResponse error, Long totalItems, Integer totalPages, Long totalVehicles) {
         this.data = data;
         this.error = error;
         this.totalItems = totalItems;
         this.totalPages = totalPages;
+        this.totalVehicles = totalVehicles;
     }
 
     public T getData() {
@@ -44,5 +46,13 @@ public class ApiResponsePagination<T> {
 
     public void setTotalPages(Integer totalPages) {
         this.totalPages = totalPages;
+    }
+
+    public Long getTotalVehicles() {
+        return totalVehicles;
+    }
+
+    public void setTotalVehicles(Long totalVehicles) {
+        this.totalVehicles = totalVehicles;
     }
 }

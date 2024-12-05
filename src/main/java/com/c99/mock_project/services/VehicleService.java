@@ -22,6 +22,10 @@ public class VehicleService {
         return vehicleRepository.findAll(pageable); // Return paginated Vehicle entities
     }
 
+    public long vehiclesCount() {
+        return vehicleRepository.count();
+    }
+
     public Page<Vehicle> searchVehicles(String search, PageRequest pageRequest) {
         return vehicleRepository.findByBrandContainingOrModelContaining(search, search, pageRequest);
     }
