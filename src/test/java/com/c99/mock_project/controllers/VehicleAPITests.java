@@ -1,6 +1,7 @@
 package com.c99.mock_project.controllers;
 
 import com.c99.mock_project.entities.Vehicle;
+import com.c99.mock_project.models.VehicleDTO;
 import com.c99.mock_project.services.VehicleService;
 import org.modelmapper.ModelMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -103,6 +105,16 @@ public class VehicleAPITests {
     }
 
     @Test
+    public void VehicleController_GetVehicleById_VehicleNotFound_ReturnNotFound() throws Exception {
+        Long id = 999L;
+        mockMvc.perform(get("/api/vehicles/{id}", id)
+                        .header("Authorization", basicAuthHeader))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.error.error", is("Vehicle Not Found")))
+                .andExpect(jsonPath("$.error.message", is("Vehicle not found for ID: " + id)));
+    }
+
+    @Test
     public void VehicleController_CreateVehicle_ReturnCreated () throws Exception {
         Vehicle vehicle = Vehicle.builder()
                 .vin("1HGCM82633A123451")
@@ -154,6 +166,23 @@ public class VehicleAPITests {
                 .andExpect(jsonPath("$.data.trim").value(updatedVehicle.getTrim()))
                 .andExpect(jsonPath("$.data.mileage").value(updatedVehicle.getMileage()));
     }
+
+    @Test
+    public void VehicleController_UpdateVehicle_NotFound() throws Exception {
+        Long id = 999L;
+        Vehicle updatedVehicle = vehicleService.getById(savedVehicle.getId());
+        updatedVehicle.setYear(2021);
+        updatedVehicle.setMileage(22000);
+
+        mockMvc.perform(put("/api/vehicles/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updatedVehicle))
+                        .header("Authorization", basicAuthHeader))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.error.error", is("No vehicle with the given ID was found to update.")))
+                .andExpect(jsonPath("$.error.message", is("Vehicle not found for ID: " + id)));
+    }
+
 
     @Test
     public void VehicleController_DeleteVehicleById_ReturnNoContent () throws Exception {
