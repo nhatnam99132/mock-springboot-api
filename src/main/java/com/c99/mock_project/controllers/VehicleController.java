@@ -58,7 +58,7 @@ public class VehicleController {
         List<VehicleDTO> vehicleDTOs = vehiclePage.getContent().stream()
                 .map(vehicle -> modelMapper.map(vehicle, VehicleDTO.class))  // Map each Vehicle to VehicleDTO
                 .collect(Collectors.toList());
-
+        long totalVehicles = vehicleService.vehiclesCount();
         logger.info("Successfully fetched {} vehicles", vehicleDTOs.size());
 
         // Construct the paginated ApiResponsePagination
@@ -66,7 +66,8 @@ public class VehicleController {
                 vehicleDTOs,  // Data: List of VehicleDTOs
                 null,  // Error: Assuming no error, else set the error response here
                 vehiclePage.getTotalElements(),  // Total elements (for pagination)
-                vehiclePage.getTotalPages()  // Total pages (for pagination)
+                vehiclePage.getTotalPages(),  // Total pages (for pagination)
+                totalVehicles
         );
 
         // Return the response wrapped in ResponseEntity
